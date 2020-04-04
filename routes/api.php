@@ -15,10 +15,13 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+$router->group(['prefix' => 'auth'], function () use ($router) {
+    $router->post('login', 'AuthenticationController@logIn');
+});
 $router->group(['prefix' => 'event'], function () use ($router) {
     $router->get('get/list', 'EventController@getEventList');
     // $router->get('get/{id}', 'EventController@getEventList');
     $router->post('add', 'EventController@addEvent');
-    $router->patch('edit', 'EventController@addEvent');
+    $router->patch('edit/{id}', 'EventController@editEvent');
+    $router->patch('delete', 'EventController@deleteEvent');
 });
- 
