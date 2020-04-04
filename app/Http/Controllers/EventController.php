@@ -52,13 +52,16 @@ class EventController extends Controller
             ])->respond(400);
         }
         
-        $event = Event::create([
+        $id = uniqid();
+        Event::create([
+            'id' => $id,
             'name' => $this->request->input('name'),
             'event_location' => $this->request->input('eventLocation'),
-            'date' => $this->request->input('date'),
+            'date' => $this->request->input('date')
         ]);
-        
-        if($event){
+
+        $event = Event::find($id);
+        if($event) {
             $result = [
                 'id' => $event->id,
                 'name' => $event->name,
@@ -73,6 +76,10 @@ class EventController extends Controller
         }else{
             return responder()->error()->respond(400);
         }
+    }
+
+    public function editEvent()
+    {
     }
 
 }

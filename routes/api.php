@@ -15,6 +15,10 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('geteventlist','EventController@getEventList');
-$router->post('addevent','EventController@addEvent');
+$router->group(['prefix' => 'event'], function () use ($router) {
+    $router->get('get/list', 'EventController@getEventList');
+    // $router->get('get/{id}', 'EventController@getEventList');
+    $router->post('add', 'EventController@addEvent');
+    $router->patch('edit', 'EventController@addEvent');
+});
  
