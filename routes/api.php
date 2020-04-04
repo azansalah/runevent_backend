@@ -16,4 +16,5 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('geteventlist','EventController@getEventList');
+$router->post('addevent','EventController@addEvent');
  
