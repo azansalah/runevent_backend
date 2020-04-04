@@ -15,6 +15,5 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/test', function () use ($router) {
-    return 'hello world';
-});
+$router->get('geteventlist','EventController@getEventList');
+ 
