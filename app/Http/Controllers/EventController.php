@@ -26,11 +26,24 @@ class EventController extends Controller
 
         $result = [];
         foreach($events as $event){
+            $packages = Package::where('event_id',$event->id)->get();
+            $packageList = [];
+            foreach($packages as $package){
+                array_push($packageList,[
+                    'id' => $package->id,
+                    'name' => $package->name,
+                    'time' => $package->time,
+                    'price' => $package->price,
+                    'isLimit' => $package->is_limit,
+                    'limitCount' => $package->limit_count,
+                ]);
+            }
             array_push($result, [
                 'id' => $event->id,
                 'name' => $event->name,
                 'Location' => $event->location,
-                'date' => $event->date
+                'date' => $event->date,
+                'packages' => $packageList
             ]);
         }
         $data = [
@@ -45,15 +58,30 @@ class EventController extends Controller
         if($id) {
             $event = Event::find($id);
             if($event) {
+                $packages = Package::where('event_id',$event->id)->get();
+
+                $packageList = [];
+                foreach($packages as $package){
+                    array_push($packageList,[
+                        'id' => $package->id,
+                        'name' => $package->name,
+                        'time' => $package->time,
+                        'price' => $package->price,
+                        'isLimit' => $package->is_limit,
+                        'limitCount' => $package->limit_count,
+                    ]);
+                }
                 $result = [
                     'id' => $event->id,
                     'name' => $event->name,
                     'location' => $event->location,
-                    'date' => $event->date
+                    'date' => $event->date,
+                    'packages' => $packageList
                 ];    
                 $data = [
                     'result' => $result,
                 ];
+     
                 return responder()->success($data)->respond(200);
             }else {
                 return responder()->error()->respond(404);
@@ -123,7 +151,9 @@ class EventController extends Controller
         if($id) {
 
             $validator = Validator::make($this->request->all(), [
-                'date' => 'date_format:Y-m-d H:i:s'
+                'name' => 'required',
+                'location' => 'required',
+                'date' => 'required|date_format:Y-m-d',
             ]);
     
             if ($validator->fails()) {

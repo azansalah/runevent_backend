@@ -20,7 +20,7 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 });
 $router->group(['prefix' => 'event'], function () use ($router) {
     $router->get('get/list', 'EventController@getEventList');
-    // $router->get('get/{id}', 'EventController@getEventList');
+    $router->get('get/{id}', 'EventController@getEvent');
     $router->post('add', 'EventController@addEvent');
     $router->patch('edit/{id}', 'EventController@editEvent');
     $router->patch('delete', 'EventController@deleteEvent');
