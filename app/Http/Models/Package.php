@@ -4,10 +4,10 @@ namespace App\Http\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Event extends Model
+class Package extends Model
 {
     protected $connection = 'mysql';
-    protected $table = 'events';
+    protected $table = 'packages';
     protected $primaryKey = 'id';
     protected $keyType = 'string';
 
@@ -15,8 +15,11 @@ class Event extends Model
 
     protected $fillable = [
         'id',
+        'event_id',
         'name',
-        'location',
-        'date'
+        'time',
+        'price',
+        'is_limit',
+        'limit_count'
     ];
 }

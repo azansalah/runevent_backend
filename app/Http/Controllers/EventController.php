@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Models\Event;
+use App\Http\Models\Package;
 
 
 class EventController extends Controller
@@ -28,7 +29,7 @@ class EventController extends Controller
             array_push($result, [
                 'id' => $event->id,
                 'name' => $event->name,
-                'eventLocation' => $event->event_location,
+                'Location' => $event->location,
                 'date' => $event->date
             ]);
         }
@@ -47,10 +48,9 @@ class EventController extends Controller
                 $result = [
                     'id' => $event->id,
                     'name' => $event->name,
-                    'eventLocation' => $event->event_location,
+                    'location' => $event->location,
                     'date' => $event->date
-                ];
-    
+                ];    
                 $data = [
                     'result' => $result,
                 ];
@@ -68,7 +68,16 @@ class EventController extends Controller
     public function addEvent()
     {
         $validator = Validator::make($this->request->all(), [
-            'date' => 'date_format:Y-m-d H:i:s'
+            'name' => 'required',
+            'location' => 'required',
+            'date' => 'required|date_format:Y-m-d',
+            'packages.*.name' => 'required',
+            'packages.*.time' => 'required|date_format:H:i:s',
+            'packages.*.price' => 'required|numeric',
+            'packages.*.isLimit' => 'required|boolean',
+            'packages.*.limitCount' => 'nullable|numeric',
+
+
         ]);
 
         if ($validator->fails()) {
@@ -78,17 +87,32 @@ class EventController extends Controller
             ])->respond(400);
         }
 
-        $id = uniqid();
+        $eventId = uniqid();
         Event::create([
-            'id' => $id,
+            'id' => $eventId,
             'name' => $this->request->input('name'),
-            'event_location' => $this->request->input('eventLocation'),
+            'location' => $this->request->input('location'),
             'date' => $this->request->input('date')
         ]);
 
-        $event = Event::find($id);
+        $packages = $this->request->input('packages');
+        foreach($packages as $package){
+            $packageId = uniqid();
+            Package::create([
+                'id' => $packageId,
+                'event_id' => $eventId,
+                'name' => $package['name'],
+                'time' => $package['time'],
+                'price' => $package['price'],
+                'is_limit' => $package['isLimit'],
+                'limit_count' => $package['limitCount'],
+            ]);
+        }
+
+
+        $event = Event::find($eventId);
         if($event) {
-            return $this->getEvent($id);
+            return $this->getEvent($eventId);
         }else {
             return responder()->error()->respond(400);
         }
@@ -113,7 +137,7 @@ class EventController extends Controller
             if($event) {
                 $event->update([
                     'name' => $this->request->input('name'),
-                    'event_location' => $this->request->input('eventLocation'),
+                    'location' => $this->request->input('location'),
                     'date' => $this->request->input('date')
                 ]);
 
