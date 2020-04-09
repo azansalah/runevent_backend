@@ -32,7 +32,7 @@ class EventController extends Controller
                 array_push($packageList,[
                     'id' => $package->id,
                     'name' => $package->name,
-                    'time' => $package->time,
+                    'date' => $package->date,
                     'price' => $package->price,
                     'isLimit' => $package->is_limit,
                     'limitCount' => $package->limit_count,
@@ -41,7 +41,7 @@ class EventController extends Controller
             array_push($result, [
                 'id' => $event->id,
                 'name' => $event->name,
-                'Location' => $event->location,
+                'location' => $event->location,
                 'date' => $event->date,
                 'packages' => $packageList
             ]);
@@ -65,7 +65,7 @@ class EventController extends Controller
                     array_push($packageList,[
                         'id' => $package->id,
                         'name' => $package->name,
-                        'time' => $package->time,
+                        'date' => $package->date,
                         'price' => $package->price,
                         'isLimit' => $package->is_limit,
                         'limitCount' => $package->limit_count,
@@ -100,7 +100,7 @@ class EventController extends Controller
             'location' => 'required',
             'date' => 'required|date_format:Y-m-d',
             'packages.*.name' => 'required',
-            'packages.*.time' => 'required|date_format:H:i:s',
+            'packages.*.date' => 'required|date_format:H:i:s',
             'packages.*.price' => 'required|numeric',
             'packages.*.isLimit' => 'required|boolean',
             'packages.*.limitCount' => 'nullable|numeric',
@@ -130,7 +130,7 @@ class EventController extends Controller
                 'id' => $packageId,
                 'event_id' => $eventId,
                 'name' => $package['name'],
-                'time' => $package['time'],
+                'date' => $package['date'],
                 'price' => $package['price'],
                 'is_limit' => $package['isLimit'],
                 'limit_count' => $package['limitCount'],
