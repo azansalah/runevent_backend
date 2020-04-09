@@ -22,7 +22,7 @@ class EventController extends Controller
 
     public function getEventList()
     {
-        $events = Event::get();
+        $events = Event::orderBy('updated_at', 'DESC')->get();
 
         $result = [];
         foreach($events as $event){
@@ -33,6 +33,7 @@ class EventController extends Controller
                     'id' => $package->id,
                     'name' => $package->name,
                     'date' => $package->date,
+                    'time' => $package->time,
                     'price' => $package->price,
                     'isLimit' => $package->is_limit,
                     'limitCount' => $package->limit_count,
@@ -66,6 +67,7 @@ class EventController extends Controller
                         'id' => $package->id,
                         'name' => $package->name,
                         'date' => $package->date,
+                        'time' => $package->time,
                         'price' => $package->price,
                         'isLimit' => $package->is_limit,
                         'limitCount' => $package->limit_count,
@@ -98,9 +100,9 @@ class EventController extends Controller
         $validator = Validator::make($this->request->all(), [
             'name' => 'required',
             'location' => 'required',
-            'date' => 'required|date_format:Y-m-d',
             'packages.*.name' => 'required',
-            'packages.*.date' => 'required|date_format:H:i:s',
+            'packages.*.date' => 'required|date_format:Y-m-d',
+            'packages.*.time' => 'required|date_format:H:i',
             'packages.*.price' => 'required|numeric',
             'packages.*.isLimit' => 'required|boolean',
             'packages.*.limitCount' => 'nullable|numeric',
@@ -119,8 +121,7 @@ class EventController extends Controller
         Event::create([
             'id' => $eventId,
             'name' => $this->request->input('name'),
-            'location' => $this->request->input('location'),
-            'date' => $this->request->input('date')
+            'location' => $this->request->input('location'), 
         ]);
 
         $packages = $this->request->input('packages');
@@ -131,6 +132,7 @@ class EventController extends Controller
                 'event_id' => $eventId,
                 'name' => $package['name'],
                 'date' => $package['date'],
+                'time' => $package['time'],
                 'price' => $package['price'],
                 'is_limit' => $package['isLimit'],
                 'limit_count' => $package['limitCount'],

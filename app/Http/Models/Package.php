@@ -17,6 +17,7 @@ class Package extends Model
         'id',
         'event_id',
         'name',
+        'date',
         'time',
         'price',
         'is_limit',

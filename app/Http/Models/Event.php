@@ -11,12 +11,14 @@ class Event extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'string';
 
-    public $timestamps = false;
+    // public $timestamps = false;
 
     protected $fillable = [
         'id',
         'name',
         'location',
-        'date'
+        'created_at',
+        'updated_at',
+        'deleted_at'       
     ];
 }
