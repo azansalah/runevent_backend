@@ -155,7 +155,14 @@ class EventController extends Controller
             $validator = Validator::make($this->request->all(), [
                 'name' => 'required',
                 'location' => 'required',
-                'date' => 'required|date_format:Y-m-d',
+                'packqges.*.name' => 'required',
+                'packqges.*.date' => 'required|date_format:Y-d-m',
+                'packqges.*.time' => 'required|date_format:H:i',
+                'packqges.*.price' => 'required|numeric',
+                'packqges.*.islimit' => 'required|boolean',
+                'packqges.*.limitcount' => 'required|numeric',
+
+                
             ]);
     
             if ($validator->fails()) {
@@ -167,10 +174,45 @@ class EventController extends Controller
 
             $event = Event::find($id);
             if($event) {
+
+                $packages = $this->request->input('packages');
+                foreach($packages as $package){
+                    $packageList = [];
+                    if($package['id'] != null){
+                        $updateData = [
+                            'id' => $package['id'],
+                            'event_id' => $id,
+                            'name' => $package['name'],
+                            'date' => $package['date'],
+                            'time' => $package['time'],
+                            'price' => $package['price'],
+                            'is_limit' => $package['isLimit'],
+                            'limit_count' => $package['limitCount']
+                        ];
+                        Package::where('id', $package['id'])->update($updateData);
+                        array_push($packageList, $package['id']);
+                    }else{
+                        $packageId = uniqid();
+                        Package::create([
+                            'id' => $packageId,
+                            'event_id' => $id,
+                            'name' => $package['name'],
+                            'date' => $package['date'],
+                            'time' => $package['time'],
+                            'price' => $package['price'],
+                            'is_limit' => $package['isLimit'],
+                            'limit_count' => $package['limitCount']
+                        ]);
+                    }
+
+                    if($packageList != []){
+                        Package::whereNotIn('id', $packageList)->delete();
+                    }
+                }
+
                 $event->update([
                     'name' => $this->request->input('name'),
-                    'location' => $this->request->input('location'),
-                    'date' => $this->request->input('date')
+                    'location' => $this->request->input('location')
                 ]);
 
                 return $this->getEvent($id);
@@ -188,6 +230,7 @@ class EventController extends Controller
             if(is_array($this->request->input('eventList')) && $this->request->input('eventList') !== []){
                 $eventList = $this->request->input('eventList');
                 Event::whereIn('id', $eventList)->delete();
+                Package::WhereIn('event_id', $eventList)->delete();
 
                 return responder()->success()->respond(200);
             }else {

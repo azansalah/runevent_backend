@@ -3,15 +3,17 @@
 namespace App\Http\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Package extends Model
 {
+    use SoftDeletes;
     protected $connection = 'mysql';
     protected $table = 'packages';
     protected $primaryKey = 'id';
     protected $keyType = 'string';
 
-    public $timestamps = false;
+    //public $timestamps = false;
 
     protected $fillable = [
         'id',
@@ -21,6 +23,9 @@ class Package extends Model
         'time',
         'price',
         'is_limit',
-        'limit_count'
+        'limit_count',
+        'created_at',
+        'updated_at',
+        'deleted_at' 
     ];
 }
