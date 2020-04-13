@@ -13,4 +13,9 @@ $router->group(['middleware' => [CorsMiddleware::class]], function () use ($rout
         $router->patch('edit/{id}', 'EventController@editEvent');
         $router->patch('delete', 'EventController@deleteEvent');
     });
+    $router->group(['prefix' => 'website'], function () use ($router){
+        $router->get('geteventlist','EventWebsiteController@getEventList');
+        $router->post('register/{id}', 'EventWebsiteController@register');
+    });
+    
 });

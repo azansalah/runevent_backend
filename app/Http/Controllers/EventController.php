@@ -44,6 +44,9 @@ class EventController extends Controller
                 'name' => $event->name,
                 'location' => $event->location,
                 'date' => $event->date,
+                'created_at' => $event->created_ad,
+                'updated_at' => $event->update_at,
+                'deleted_at' => $event->deleted_at,
                 'packages' => $packageList
             ]);
         }
