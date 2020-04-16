@@ -70,9 +70,9 @@ class EventWebsiteController extends Controller
     public function register($id)
     {
         $package = Package::find($id);
-        if($package){
+        if($package) {
             $runner = Runner::where('card_no', $this->request->input('cardNo'))->first();
-            if($runner){
+            if($runner) {
                 $dataUpdate = [
                     't_name' => $this->request->input('tName'),
                     'f_name' => $this->request->input('fName'),
@@ -81,11 +81,11 @@ class EventWebsiteController extends Controller
                     'email' => $this->request->input('email'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ];
-                Runner::where('card_no', $this->request->input['card_no'])->update($dataUpdate);
+                Runner::where('card_no', $this->request->input('cardNo'))->update($dataUpdate);
             }else {
                 $runnerId = uniqid();
                 Runner::create([
-                    'id' => $runnerId,
+                    'id' =>  $runnerId,
                     'card_no' => $this->request->input('cardNo'),
                     't_name' => $this->request->input('tName'),
                     'f_name' => $this->request->input('fName'),
@@ -95,27 +95,27 @@ class EventWebsiteController extends Controller
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]);
-                $runner = Runner::where('card_no', $this->request->input['card_no'])->first();
+                $runner = Runner::where('card_no', $this->request->input('cardNo'))->first();
             }
 
             $checkAlReady = Registration::where('package_id', $id)->where('runner_id', $runner->id)->first();
-            if($checkAlReady){
+            if($checkAlReady) {
                 return responder()->error()->data([
                     'code' => '01',
-                    'message' => 'คุณเคิยสมัครแพ็คเกจนี้ไปแล้ว'
+                    'message' => 'คุณเคยสมัครแพ็คเกจนี้แล้ว'
                 ])->respond(400);
             }
             $countRegis = Registration::where('package_id', $id)->get()->count();
             $canRegis = false;
-            if($package->is_limit){
-                if($countRegis < $package->limit_count){
+            if($package->is_limit) {
+                if($countRegis < $package->limit_count) {
                     $canRegis = true;
                 }
-            }else{
+            }else {
                 $canRegis = true;
             }
 
-            if($canRegis){
+            if($canRegis) {
                 $registerId = uniqid();
                 Registration::create([
                     'id' => $registerId,
@@ -125,10 +125,10 @@ class EventWebsiteController extends Controller
                 ]);
 
                 return responder()->success()->respond(200);
-            }else{
+            }else {
                 return responder()->error()->data([
                     'code' => '02',
-                    'message' => 'แพ็คเกจที่คุณสมัคร เต็มแล้ว'
+                    'message' => 'แพ็คเกจที่คุณสมัครเต็มแล้ว'
                 ])->respond(400);
             }
         }
