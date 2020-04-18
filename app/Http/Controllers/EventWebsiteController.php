@@ -7,6 +7,7 @@ use App\Http\Models\Event;
 use App\Http\Models\Package;
 use App\Http\Models\Registration;
 use App\Http\Models\Runner;
+use Faker\Factory;
 
 class EventWebsiteController extends Controller
 {
@@ -100,10 +101,7 @@ class EventWebsiteController extends Controller
 
             $checkAlReady = Registration::where('package_id', $id)->where('runner_id', $runner->id)->first();
             if($checkAlReady) {
-                return responder()->error()->data([
-                    'code' => '01',
-                    'message' => 'คุณเคยสมัครแพ็คเกจนี้แล้ว'
-                ])->respond(400);
+                return responder()->error()->respond(400);
             }
             $countRegis = Registration::where('package_id', $id)->get()->count();
             $canRegis = false;
@@ -126,12 +124,44 @@ class EventWebsiteController extends Controller
 
                 return responder()->success()->respond(200);
             }else {
-                return responder()->error()->data([
-                    'code' => '02',
-                    'message' => 'แพ็คเกจที่คุณสมัครเต็มแล้ว'
-                ])->respond(400);
+                return responder()->error()->respond(400);
             }
         }
+    }
+
+    public function fakeData()
+    {
+        $faker = Factory::create();
+        
+        for ($i = 0; $i < 235; $i++) {
+            try {
+                $runnerId = uniqid();
+                Runner::create([
+                    'id' =>  $runnerId,
+                    'card_no' => $faker->numberBetween(0000000000000, 9999999999999),
+                    't_name' => $faker->title,
+                    'f_name' => $faker->firstName,
+                    'l_name' => $faker->lastName,
+                    'telephone' => $faker->numberBetween(0000000000, 9999999999),
+                    'email' => $faker->email,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                $registerId = uniqid();
+                Registration::create([
+                    'id' => $registerId,
+                    'runner_id' => $runnerId,
+                    'package_id' => '5e9aa50b8394d',
+                    'register_date' => date('Y-m-d H:i:s')
+                ]);
+            }catch(Exeption $e) {
+                continue;
+            }
+        }
+
+        return 'success';
+        
     }
 
 }

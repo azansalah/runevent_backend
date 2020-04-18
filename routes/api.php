@@ -16,6 +16,7 @@ $router->group(['middleware' => [CorsMiddleware::class]], function () use ($rout
     $router->group(['prefix' => 'website'], function () use ($router){
         $router->get('geteventlist','EventWebsiteController@getEventList');
         $router->post('register/{id}', 'EventWebsiteController@register');
+        $router->post('fakedata', 'EventWebsiteController@fakeData');
     });
     
 });
