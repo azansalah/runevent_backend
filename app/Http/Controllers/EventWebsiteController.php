@@ -133,8 +133,9 @@ class EventWebsiteController extends Controller
     {
         $faker = Factory::create();
         
-        for ($i = 0; $i < 235; $i++) {
+        for ($i = 0; $i < 1000; $i++) {
             try {
+                $date = $faker->dateTimeBetween($startDate = '-30 days', $endDate = 'now');
                 $runnerId = uniqid();
                 Runner::create([
                     'id' =>  $runnerId,
@@ -144,16 +145,16 @@ class EventWebsiteController extends Controller
                     'l_name' => $faker->lastName,
                     'telephone' => $faker->numberBetween(0000000000, 9999999999),
                     'email' => $faker->email,
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
+                    'created_at' => $date,
+                    'updated_at' => $date,
                 ]);
 
                 $registerId = uniqid();
                 Registration::create([
                     'id' => $registerId,
                     'runner_id' => $runnerId,
-                    'package_id' => '5e9aa50b8394d',
-                    'register_date' => date('Y-m-d H:i:s')
+                    'package_id' => '5e984a39d76fb',
+                    'register_date' => $date,
                 ]);
             }catch(Exeption $e) {
                 continue;
@@ -163,5 +164,7 @@ class EventWebsiteController extends Controller
         return 'success';
         
     }
+
+    
 
 }

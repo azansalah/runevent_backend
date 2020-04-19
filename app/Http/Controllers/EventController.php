@@ -245,4 +245,89 @@ class EventController extends Controller
         
     }
 
+    public function dashBoard()
+    {
+        $query1 = "SELECT
+                        COUNT(a.runner_id) AS count_regis,
+                        b.name AS package_name,
+                        b.price AS package_price,
+                        c.name AS event_name
+                    FROM
+                        registrations a
+                    LEFT JOIN packages b ON a.package_id = b.id
+                    LEFT JOIN events c ON b.event_id = c.id
+                    GROUP BY b.id
+                    ORDER BY count_regis DESC
+                    LIMIT 10
+        ";
+
+        $rows1 = DB::select($query1);
+
+        $packageStat = [];
+        foreach($rows1 as $row) {
+            array_push($packageStat, [
+                'packageName' => $row->package_name,
+                'eventName' => $row->event_name,
+                'packagePrice' => $row->package_price,
+                'countRegis' => $row->count_regis,
+            ]);
+        }
+
+        $query2 = "SELECT
+                        COUNT(a.runner_id) AS count_regis,
+                        c.name AS event_name,
+                        c.location as location
+                    FROM
+                        registrations a
+                    LEFT JOIN packages b ON a.package_id = b.id
+                    LEFT JOIN events c ON b.event_id = c.id
+                    GROUP BY c.id
+                    ORDER BY count_regis DESC
+                    LIMIT 10
+        ";
+
+        $rows2 = DB::select($query2);
+        
+        $eventStat = [];
+        foreach($rows2 as $row) {
+            array_push($eventStat, [
+                'eventName' => $row->event_name,
+                'location' => $row->location,
+                'countRegis' => $row->count_regis,
+            ]);
+        }
+
+        $query3 = "SELECT
+                        COUNT(id) as count_regis,
+                        CAST(register_date AS DATE) AS regis_date
+                    FROM
+                        registrations
+                    GROUP BY regis_date
+                    ORDER BY regis_date DESC
+                    LIMIT 30
+        ";
+
+        $rows3 = DB::select($query3);
+
+        $dataX = [];
+        $dataY = [];
+        foreach($rows3 as $row) {
+            array_push($dataX, $row->regis_date);
+            array_push($dataY, $row->count_regis);
+        }
+        $result = [
+            'packageStat' => $packageStat,
+            'eventStat' => $eventStat,
+            'chart' => [
+                'dataX' => $dataX,
+                'dataY' => $dataY
+            ]
+        ];
+
+        $data = [
+            'result' => $result
+        ];
+        return responder()->success($data)->respond(200);
+    }
+
 }

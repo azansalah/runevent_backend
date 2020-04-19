@@ -6,6 +6,7 @@ $router->group(['middleware' => [CorsMiddleware::class]], function () use ($rout
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('login', 'AuthenticationController@logIn');
     });
+    $router->get('dashboard', 'EventController@dashBoard');
     $router->group(['prefix' => 'event'], function () use ($router) {
         $router->get('get/list', 'EventController@getEventList');
         $router->get('get/{id}', 'EventController@getEvent');
